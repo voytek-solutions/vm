@@ -1,0 +1,11 @@
+## IDEs
+/.buildpath
+/.project
+/.settings
+/.externalToolBuilders
+*.swp
+
+
+
+# Project
+/machines/*/.vagrant

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+function main() {
+	echo "Generating inventory file ${DIR}/ansible/inventory/vagrant"
+	echo "" > ${DIR}/ansible/inventory/vagrant
+
+	for machine in `ls -1 ${DIR}/machines`; do
+		echo " - machine ${machine}"
+
+		cd ${DIR}/machines/${machine}
+		ssh_config=$(vagrant ssh-config)
+
+		host=$(getSshValue "${ssh_config}" "HostName")
+		user=$(getSshValue "${ssh_config}" " User ")
+		port=$(getSshValue "${ssh_config}" "Port")
+		identity=$(getSshValue "${ssh_config}" "IdentityFile")
+
+		echo "${machine} ansible_ssh_host=${host} ansible_ssh_port=${port} ansible_ssh_user=${user} ansible_ssh_private_key_file=${identity}" >> ${DIR}/ansible/inventory/vagrant
+	done
+
+	echo "done"
+}
+
+function getSshValue() {
+	ssh_config=$1
+	key=$2
+	echo "$ssh_config" | grep "$key" | awk '{ print $2 }'
+}
+
+main "$@"

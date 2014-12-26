@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+	# Every Vagrant virtual environment requires a box to build off of.
+	config.vm.box = "chef/centos-6.5"
+	config.vm.box_check_update = false
+
+	if !ENV['MODE']
+		config.vm.provision 'ansible' do |ansible|
+			ansible.playbook = "ansible/playbooks/web.yml"
+			ansible.tags = "provision"
+			ansible.extra_vars = {
+				hosts: 'default'
+			}
+		end
+	end
+
+	if ENV['MODE'] == 'configure'
+		config.vm.provision 'ansible' do |ansible|
+			ansible.playbook = "ansible/playbooks/vagrant.yml"
+			ansible.tags = "configure"
+			ansible.extra_vars = {
+				hosts: 'default'
+			}
+		end
+	end
+
+end

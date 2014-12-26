@@ -1,0 +1,14 @@
+---
+
+- name: This is vagrant
+
+  hosts: "{{hosts}}"
+
+  vars:
+
+  pre_tasks:
+
+  roles:
+    - dev
+
+  tasks:
